@@ -80,3 +80,35 @@ Detta avsnitt beskriver den valda tekniska stacken och rekommenderade metoder f�
 8.  **Börja Bygga Moduler:** Välj den första kärnfunktionen (t.ex. Employee Management) och börja definiera databasstrukturen i Supabase, implementera RLS, och bygg UI i Next.js.
 
 Genom att följa denna plan och dessa metoder kan projektet utvecklas på ett strukturerat sätt, vilket minskar risken för problem och gör det lättare att hantera och bygga vidare på i framtiden. Fokusera på att förstå Supabase RLS och att bygga iterativt.
+
+---
+
+## Databasstatus (2025-04-30)
+
+Grundläggande databasschema har skapats i Supabase enligt specifikationerna i `step-by-step.md` och övriga kravdokument. Detta inkluderar:
+
+*   **Tabeller:** Skapande av alla nödvändiga tabeller för kärnfunktionerna:
+    *   `roles`, `profiles` (med `manager_id` för teamstruktur)
+    *   `schedules`, `todos`
+    *   `education_pages`, `secure_notes`, `shared_content`
+    *   `documents_for_signing`
+    *   `transactions`
+    *   `direct_messages`, `group_chats`, `group_chat_members`, `group_chat_messages`
+    *   `urgent_messages`
+    *   `attendance`
+*   **Relationer:** Korrekta kopplingar (foreign keys) mellan tabellerna har definierats.
+*   **Triggers:** Automatiska funktioner för att hantera t.ex. `updated_at`-tidsstämplar och skapande av `profiles` vid ny användarregistrering.
+*   **Row Level Security (RLS):** Grundläggande RLS-policyer har implementerats för samtliga tabeller för att säkerställa att användare endast kan komma åt data enligt sina roller och behörigheter (definierade i `roller_behörigheter.md`). Detta inkluderar specifika regler för Owners, Admins, Managers (via teamkoppling), och enskilda användare.
+*   **Hjälpfunktioner:** SQL-funktioner (`get_my_role`, `is_my_team_member`, `immutable_date`) har skapats för att underlätta RLS-policydefinitioner.
+
+**Vad detta möjliggör:**
+
+Med denna databasstruktur på plats är grunden lagd för att börja bygga frontend-komponenter och logik i Next.js. Utvecklare kan nu:
+
+1.  Implementera användarautentisering (signup, login, logout, password reset) via Supabase Auth.
+2.  Börja bygga UI-komponenter för att visa och interagera med data från de skapade tabellerna (t.ex. lista anställda, visa scheman, hantera To-Do-listor).
+3.  Använda Supabase JavaScript-klienten för att hämta och modifiera data, där RLS-policyerna automatiskt säkerställer korrekt behörighetshantering i backend.
+4.  Börja implementera funktioner som filuppladdning (kontrakt, utbildningsmaterial) till Supabase Storage.
+5.  Börja använda Supabase Realtime för funktioner som chatt och notiser.
+
+Nästa steg i utvecklingen är typiskt att implementera autentiseringsflödet och därefter börja bygga ut de olika modulerna (Employee Management, Scheduling, etc.) i frontend, med koppling mot den nu etablerade databasstrukturen.
